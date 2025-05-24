@@ -1,0 +1,19 @@
+{
+	"name": "SvelteKit MapLibre Project",
+	"dockerFile": "Dockerfile",
+	"forwardPorts": [5173, 4173],
+	"remoteUser": "node",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"svelte.svelte-vscode",
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"bradlc.vscode-tailwindcss",
+				"github.copilot",
+				"ms-vscode.vscode-speech"
+			]
+		}
+	},
+	"postCreateCommand": "npm install"
+}
