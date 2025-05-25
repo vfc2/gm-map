@@ -31,9 +31,13 @@ jobs:
 
       - name: Build
         env:
-          # Use PR number for the base path to avoid conflicts
+          # Use PR number for the base path to avoid conflicts - must match the deployment path
           BASE_PATH: '/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}'
-        run: npm run build
+        run: |
+          echo "Building with BASE_PATH=${BASE_PATH}"
+          # Create a .env file to ensure the BASE_PATH is available during build
+          echo "PUBLIC_BASE_PATH=${BASE_PATH}" > .env
+          npm run build
 
       - name: Deploy preview
         uses: JamesIves/github-pages-deploy-action@v4
@@ -66,7 +70,7 @@ jobs:
             Changes from this PR are deployed to a preview environment:
 
             🔗 [View Preview](https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }})
-            
+
             _This preview will be automatically updated when new changes are pushed to this PR._
 
       # Make sure GitHub Pages is enabled for this repository
@@ -75,6 +79,19 @@ jobs:
         run: |
           # Create gh-pages branch if it doesn't exist
           git fetch origin gh-pages || git branch gh-pages
+
+          # Verify the build output
+          echo "Verifying build output structure:"
+          ls -la build/
+
+          # Make sure the _app directory and assets are properly linked with the correct base path
+          echo "Checking _app directory:"
+          ls -la build/_app/ || echo "_app directory not found"
+
+          # Additional debugging - check that index.html has the correct references
+          echo "Checking index.html for proper base path:"
+          grep -i "src=" build/index.html || echo "No script references found"
+
           # Get the current repo URL for the comment
           REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
           echo "page_url=https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT

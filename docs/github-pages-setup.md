@@ -5,12 +5,14 @@ This document explains how to set up GitHub Pages for PR previews in this reposi
 ## Initial Setup
 
 1. Go to the repository settings on GitHub:
+
    - Navigate to `Settings` > `Pages`
    - Under "Source", select "Deploy from a branch"
    - Select the `gh-pages` branch and `/ (root)` folder
    - Click "Save"
 
 2. Run the GitHub Pages setup workflow manually:
+
    - Go to the "Actions" tab in the repository
    - Select the "Setup GitHub Pages" workflow
    - Click "Run workflow" on the main branch

@@ -29,7 +29,7 @@ jobs:
           git fetch origin gh-pages || git checkout -b gh-pages
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          
+
           # Create a simple index.html file if it doesn't exist
           if [ ! -f index.html ]; then
             echo "<html><body><h1>GitHub Pages for GM Map</h1><p>This branch hosts PR preview deployments.</p></body></html>" > index.html
@@ -37,8 +37,14 @@ jobs:
             git commit -m "Initial GitHub Pages setup"
             git push origin gh-pages
           fi
-          
+
       - name: Deploy GitHub Pages site
+        run: |
+          echo "GitHub Pages setup is complete!"
+          echo "Once this workflow completes, go to:"
+          echo "Repository Settings > Pages > GitHub Pages"
+          echo "Ensure that 'Source' is set to 'Deploy from a branch'"
+          echo "And 'Branch' is set to 'gh-pages' with '/ (root)' folder"
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: . # Just deploy the current directory with the index.html file
