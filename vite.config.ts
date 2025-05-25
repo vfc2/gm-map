@@ -18,11 +18,11 @@ export default defineConfig(({ mode }) => {
 
 	return {
 		plugins: [sveltekit()],
-		// Ensure the base path is correctly set for both dev and production
-		base: basePath,
+		// Remove base path configuration as SvelteKit handles it
+		// base: basePath, 
 		build: {
 			// Ensure paths in built files include the correct base
-			assetsDir: '_app/immutable',
+			// assetsDir: '_app/immutable', // Let SvelteKit handle this
 			emptyOutDir: true,
 			// For better debugging
 			sourcemap: true
