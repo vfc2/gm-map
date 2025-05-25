@@ -9,6 +9,7 @@ We use Vercel to automatically deploy preview versions of pull requests, which a
 ## How It Works
 
 1. When a pull request is opened or updated, Vercel automatically:
+
    - Builds the application
    - Deploys it to a unique URL
    - Adds a comment on the PR with the preview URL
