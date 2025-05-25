@@ -20,7 +20,15 @@ const config = {
 		// Ensure paths work correctly in GitHub Pages subdirectories
 		paths: {
 			base: process.env.BASE_PATH || ''
-		}
+		},
+		// Make sure assets use relative paths
+		trailingSlash: 'always',
+		// Ensure correct path resolution
+		alias: {
+			$lib: './src/lib'
+		},
+		// Configure app paths
+		appDir: '_app'
 	}
 };
 

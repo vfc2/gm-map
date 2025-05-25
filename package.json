@@ -14,6 +14,8 @@
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"test": "vitest",
+		"build:pr-preview": "node scripts/prepare-build.js && vite build",
+		"preview:pr": "BASE_PATH='/gm-map/pr-preview/pr-test' npm run build:pr-preview && npm run preview",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest run --coverage",
 		"test:ci": "vitest run"

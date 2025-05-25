@@ -10,31 +10,44 @@
 			// string into just a query string, and then redirects the browser
 			// to the new url with only a query string and hash fragment
 
-			// If you're creating a Project Pages site and NOT using a custom domain,
-			// then set pathSegmentsToKeep to 1 (enterprise users may need to set it to > 1).
-			// For PR previews, we need to keep more segments (gm-map/pr-preview/pr-XX)
-			var path = window.location.pathname;
-			var pathSegmentsToKeep = 2; // Default for project pages
+			// Dynamic path segments calculation
+			function calculatePathSegmentsToKeep() {
+				var path = window.location.pathname;
 
-			// Check if this is a PR preview path
-			if (path.indexOf('/pr-preview/pr-') > -1) {
-				pathSegmentsToKeep = 4; // For PR preview paths: /gm-map/pr-preview/pr-XX
+				// For PR preview paths in the format /org/repo/pr-preview/pr-XX/
+				if (path.includes('/pr-preview/pr-')) {
+					// Count segments before the app routes
+					var pathParts = path.split('/').filter(Boolean);
+					var prIndex = pathParts.findIndex((part) => part === 'pr-preview');
+					if (prIndex >= 0) {
+						return prIndex + 2; // +2 for 'pr-preview' and 'pr-XX'
+					}
+					return 4; // Default for PR preview paths: /org/repo/pr-preview/pr-XX
+				}
+
+				return 2; // Default for regular GitHub Pages project sites
 			}
 
+			var pathSegmentsToKeep = calculatePathSegmentsToKeep();
+			console.log('Path segments to keep:', pathSegmentsToKeep);
+
 			var l = window.location;
+			var basePath = l.pathname.split('/').slice(0, pathSegmentsToKeep).join('/');
+			var route = l.pathname.slice(basePath.length);
+
+			if (route === '') route = '/';
+
+			console.log('Base path:', basePath);
+			console.log('Route:', route);
+
 			l.replace(
 				l.protocol +
 					'//' +
 					l.hostname +
 					(l.port ? ':' + l.port : '') +
-					l.pathname.split('/').slice(0, pathSegmentsToKeep).join('/') +
+					basePath +
 					'/?/' +
-					l.pathname
-						.slice(1)
-						.split('/')
-						.slice(pathSegmentsToKeep - 1)
-						.join('/')
-						.replace(/&/g, '~and~') +
+					route.slice(1).replace(/&/g, '~and~') +
 					(l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
 					l.hash
 			);

@@ -43,3 +43,39 @@ If PR previews aren't working:
 2. Check that the workflow has the correct permissions to write to the repository
 3. Ensure that the gh-pages branch exists and is properly configured
 4. If needed, run the GitHub Pages setup workflow manually
+
+### Blank Page Issues
+
+If you see a blank page with the preview:
+
+1. Open the browser developer console (F12) to check for errors
+2. Look for 404 errors when loading JavaScript modules or assets
+   - If files are looking for paths like `/_app/...` instead of `/gm-map/pr-preview/pr-X/_app/...`
+   - This indicates a base path configuration issue
+3. Verify the `PUBLIC_BASE_PATH` environment variable is correctly set during build
+4. Check that the `window.APP_BASE_PATH` is properly defined in the path-config.js file
+5. Make sure vite.config.ts and svelte.config.js are correctly using the base path
+
+### Loading Module Errors
+
+If you see errors like `Failed to fetch dynamically imported module`:
+
+1. The most common cause is incorrect base path configuration
+2. Check the path in the error message - it should include the full path with `/gm-map/pr-preview/pr-X/`
+3. Run a test build locally with the BASE_PATH environment variable set to the same value used in the workflow:
+   ```bash
+   BASE_PATH='/gm-map/pr-preview/pr-X' npm run build
+   ```
+4. Inspect the generated HTML in the build folder to ensure paths include the base path
+
+### Permission Issues
+
+If the workflow fails due to permissions:
+
+1. Make sure the workflow has appropriate permissions:
+   ```yaml
+   permissions:
+     contents: write # Needed to write to the gh-pages branch
+     pull-requests: write # Needed to comment on pull requests
+   ```
+2. Ensure there are no branch protection rules blocking the workflow from writing to the gh-pages branch
