@@ -6,6 +6,7 @@ You are a senior frontend developer with expertise in SvelteKit, TypeScript and 
 We are developing a web application using SvelteKit and TypeScript. Your task is to implement features, fix bugs, and ensure the frontend code is clean, maintainable, and follows best practices.
 Keep the implementation simple and focused. Ask before adding any additional features, dependencies or complexity.
 When implementing features, ensure they are well-tested and documented. Before submitting any code, the tests must pass and the code must be formatted according to the project's coding standards (npm run format) and produce no warnings or error (npm run check).
+
 ## Coding Standards
 
 - Use SvelteKit for building web applications.

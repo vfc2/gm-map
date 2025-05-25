@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
-import * as svelte from 'svelte';
 
 // Mock necessary browser APIs
 Object.defineProperty(window, 'matchMedia', {

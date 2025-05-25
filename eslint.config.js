@@ -23,6 +23,9 @@ export default ts.config(
 		rules: { 'no-undef': 'off' }
 	},
 	{
+		ignores: ['coverage/**']
+	},
+	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
 		languageOptions: {
 			parserOptions: {

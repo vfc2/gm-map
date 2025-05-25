@@ -2,7 +2,7 @@
 // We'll test just the module functions that don't require component mounting
 
 import { describe, it, expect, vi } from 'vitest';
-import { getSuggestions, type SearchResult, type SearchError } from '../localSearchModule';
+import { getSuggestions } from '../localSearchModule';
 
 // Mock getSuggestions for isolated testing
 vi.mock('../localSearchModule', () => ({
