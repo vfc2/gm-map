@@ -1,7 +1,3 @@
----
-applyTo: '**'
----
-
 This is a SvelteKit and Typescript based repository. It is a data visualisation app based on a map. Please follow these guidelines when contributing:
 
 ## Code Standards

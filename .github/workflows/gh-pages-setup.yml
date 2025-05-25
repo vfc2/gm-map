@@ -1,0 +1,73 @@
+name: Setup GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  setup_pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          static_site_generator: 'sveltekit'
+
+      - name: Configure git for GitHub Actions
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+      - name: Ensure gh-pages branch exists
+        run: |
+          # Try to fetch the gh-pages branch, create it if it doesn't exist
+          git fetch origin gh-pages || git checkout -b gh-pages
+
+      - name: Create necessary files
+        run: |
+          # Create a basic .nojekyll file to prevent GitHub Pages from using Jekyll
+          touch .nojekyll
+
+          # Create a simple index.html in the root to prevent 404 errors
+          if [ ! -f index.html ]; then
+            echo '<!DOCTYPE html>' > index.html
+            echo '<html>' >> index.html
+            echo '<head>' >> index.html
+            echo '  <meta charset="utf-8">' >> index.html
+            echo '  <title>GM Map - GitHub Pages</title>' >> index.html
+            echo '  <meta http-equiv="refresh" content="0; url=https://vfc2.github.io/gm-map/">' >> index.html
+            echo '  <script>' >> index.html
+            echo '    window.location.href = "https://vfc2.github.io/gm-map/";' >> index.html
+            echo '  </script>' >> index.html
+            echo '</head>' >> index.html
+            echo '<body>' >> index.html
+            echo '  <p>Redirecting to main application...</p>' >> index.html
+            echo '  <p>If you are not redirected, <a href="https://vfc2.github.io/gm-map/">click here</a>.</p>' >> index.html
+            echo '</body>' >> index.html
+            echo '</html>' >> index.html
+          fi
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .
+          branch: gh-pages
+          clean-exclude: pr-preview/
+
+      - name: Output setup instructions
+        run: |
+          echo "GitHub Pages setup is complete!"
+          echo "Once this workflow completes, go to:"
+          echo "Repository Settings > Pages > GitHub Pages"
+          echo "Ensure that 'Source' is set to 'Deploy from a branch'"
+          echo "And 'Branch' is set to 'gh-pages' with '/ (root)' folder"
