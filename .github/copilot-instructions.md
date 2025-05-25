@@ -10,6 +10,9 @@ This is a SvelteKit and Typescript based repository. It is a data visualisation 
 - Run `npm run build` to ensure that the code compiles without errors or warnings.
 - Run `npm run test:ci` to ensure that all tests pass before committing.
 
+### Branch Naming
+- Use descriptive branch names that reflect the changes being made, e.g., `feature/add-new-chart`, `bugfix/fix-map-zoom`, or `docs/update-readme`.
+
 ## Key Guidelines
 
 1. Follow Go best practices and idiomatic patterns
