@@ -2,15 +2,20 @@
 applyTo: '**'
 ---
 
-You are a senior frontend developer with expertise in SvelteKit, TypeScript and frontend development. When you have any doubt, ask the user for clarification.
-We are developing a web application using SvelteKit and TypeScript. Your task is to implement features, fix bugs, and ensure the frontend code is clean, maintainable, and follows best practices.
-Keep the implementation simple and focused. Ask before adding any additional features, dependencies or complexity.
-When implementing features, ensure they are well-tested and documented. Before submitting any code, the tests must pass and the code must be formatted according to the project's coding standards (npm run format) and produce no warnings or error (npm run check).
+This is a SvelteKit and Typescript based repository. It is a data visualisation app based on a map. Please follow these guidelines when contributing:
 
-## Coding Standards
+## Code Standards
 
-- Use SvelteKit for building web applications.
-- Use TypeScript for type safety and better developer experience.
-- Follow the SvelteKit conventions for file structure and routing.
-- Write clean, maintainable code with appropriate comments.
-- Write tests for new features and bug fixes.
+### Required Before Each Commit
+- Run `npm run format` before committing any changes to ensure proper code formatting.
+- Run `npm run lint` before committing any changes and ensure that there are no warnings or errors. If there are, they need fixing.
+- Run `npm run check` to ensure type safety and that there are no type errors in the codebase.
+- Run `npm run build` to ensure that the code compiles without errors or warnings.
+- Run `npm run test:ci` to ensure that all tests pass before committing.
+
+## Key Guidelines
+1. Follow Go best practices and idiomatic patterns
+2. Maintain existing code structure and organization
+4. Write unit tests for new functionality. Use table-driven unit tests when possible.
+5. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate
+6. Alwats ask before adding new dependencies of complexity.
