@@ -6,18 +6,15 @@ on:
 
 # Set permissions needed for the workflow
 permissions:
-  contents: write  # Needed to write to the gh-pages branch
-  pull-requests: write  # Needed to comment on pull requests
-  pages: write  # Needed for GitHub Pages deployments
-  id-token: write  # Needed for GitHub Pages deployments
+  contents: write # Needed to write to the gh-pages branch
+  pull-requests: write # Needed to comment on pull requests
+  pages: write # Needed for GitHub Pages deployments
+  id-token: write # Needed for GitHub Pages deployments
 
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     name: Build and Deploy PR Preview
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -39,13 +36,12 @@ jobs:
         run: npm run build
 
       - name: Deploy preview
-        uses: rossjrw/pr-preview-action@v1.4.7
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          source-dir: ./build
-          preview-branch: gh-pages
-          umbrella-dir: pr-preview
-          action: auto
-          token: ${{ secrets.GITHUB_TOKEN }}
+          folder: build
+          branch: gh-pages
+          target-folder: pr-preview/pr-${{ github.event.pull_request.number }}
+          clean: true
 
       # Post comment on PR with preview URL
       - name: Find Comment
@@ -68,9 +64,11 @@ jobs:
             ### 🚀 Preview deployment
 
             Changes from this PR are deployed to a preview environment:
-            
+
             🔗 [View Preview](https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }})
             
+            _This preview will be automatically updated when new changes are pushed to this PR._
+
       # Make sure GitHub Pages is enabled for this repository
       - name: Configure GitHub Pages
         id: deployment
@@ -79,8 +77,4 @@ jobs:
           git fetch origin gh-pages || git branch gh-pages
           # Get the current repo URL for the comment
           REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-          echo "page_url=${REPO_URL}/pr-preview/pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
-
-            🔗 https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}/
-
-            _This preview will be automatically updated when new changes are pushed to this PR._
+          echo "page_url=https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT

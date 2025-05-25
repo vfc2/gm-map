@@ -4,8 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - '.github/workflows/gh-pages-setup.yml'
 
 permissions:
   contents: write
@@ -19,20 +17,30 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
         with:
-          static_site_generator: "sveltekit"
-      
+          static_site_generator: 'sveltekit'
+
       - name: Ensure gh-pages branch exists
         run: |
-          git fetch origin gh-pages || git checkout --orphan gh-pages
+          # Try to fetch the gh-pages branch, create it if it doesn't exist
+          git fetch origin gh-pages || git checkout -b gh-pages
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
+          
+          # Create a simple index.html file if it doesn't exist
           if [ ! -f index.html ]; then
             echo "<html><body><h1>GitHub Pages for GM Map</h1><p>This branch hosts PR preview deployments.</p></body></html>" > index.html
             git add index.html
             git commit -m "Initial GitHub Pages setup"
             git push origin gh-pages
           fi
+          
+      - name: Deploy GitHub Pages site
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: . # Just deploy the current directory with the index.html file
+          branch: gh-pages
+          clean-exclude: pr-preview/ # Don't delete PR preview directories
