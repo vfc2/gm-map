@@ -13,7 +13,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment:
-      name: github-pages
+      name: pr-preview
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
