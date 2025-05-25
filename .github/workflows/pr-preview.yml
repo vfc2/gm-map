@@ -4,10 +4,20 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+# Set permissions needed for the workflow
+permissions:
+  contents: write  # Needed to write to the gh-pages branch
+  pull-requests: write  # Needed to comment on pull requests
+  pages: write  # Needed for GitHub Pages deployments
+  id-token: write  # Needed for GitHub Pages deployments
+
 jobs:
   build_and_preview:
     runs-on: ubuntu-latest
     name: Build and Deploy PR Preview
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,7 +45,7 @@ jobs:
           preview-branch: gh-pages
           umbrella-dir: pr-preview
           action: auto
-          token: ${{ secrets.PAT_GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       # Post comment on PR with preview URL
       - name: Find Comment
@@ -45,7 +55,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: Preview deployment
-          token: ${{ secrets.PAT_GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create or update comment
         uses: peter-evans/create-or-update-comment@v3
@@ -53,11 +63,23 @@ jobs:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
           edit-mode: replace
-          token: ${{ secrets.PAT_GITHUB }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           body: |
             ### 🚀 Preview deployment
 
             Changes from this PR are deployed to a preview environment:
+            
+            🔗 [View Preview](https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }})
+            
+      # Make sure GitHub Pages is enabled for this repository
+      - name: Configure GitHub Pages
+        id: deployment
+        run: |
+          # Create gh-pages branch if it doesn't exist
+          git fetch origin gh-pages || git branch gh-pages
+          # Get the current repo URL for the comment
+          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          echo "page_url=${REPO_URL}/pr-preview/pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
 
             🔗 https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}/
 
