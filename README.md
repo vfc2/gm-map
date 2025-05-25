@@ -1,5 +1,7 @@
 # Greater Manchester Explorer
 
+[![CI](https://github.com/yourusername/sveltekit-test/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/sveltekit-test/actions/workflows/ci.yml)
+
 An interactive map application for Greater Manchester using SvelteKit, TypeScript, and MapLibre.
 
 ## Features
@@ -70,5 +72,44 @@ npm run build
 ```
 
 You can preview the production build with `npm run preview`.
+
+## Testing and CI/CD
+
+This project includes automated testing and Continuous Integration workflows:
+
+```bash
+# Run tests in watch mode
+npm run test
+
+# Run tests once (used by CI)
+npm run test:ci
+
+# Run tests with UI
+npm run test:ui
+
+# Generate test coverage report
+npm run test:coverage
+
+# Check code formatting
+npm run format
+
+# Run linting
+npm run lint
+
+# Run type checking
+npm run check
+```
+
+### Pull Request Process
+
+All branches require a Pull Request before merging to main. The CI workflow will automatically run:
+
+1. Code formatting check
+2. Linting
+3. Type checking
+4. Tests
+5. Build verification
+
+Any warnings or errors will cause the CI check to fail, preventing merge to main.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

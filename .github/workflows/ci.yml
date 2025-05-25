@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check format
+        run: npm run format -- --check
+        # This will fail if code is not properly formatted
+
+      - name: Run linting
+        run: npm run lint
+        # This will fail if linting issues exist
+
+      - name: Type checking
+        run: npm run check
+        # This will fail if TypeScript errors exist
+
+      - name: Run tests
+        run: npm run test:ci
+        # This will fail if tests fail
+
+      - name: Build
+        run: npm run build
+        # This will fail if the build fails
