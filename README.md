@@ -112,4 +112,14 @@ All branches require a Pull Request before merging to main. The CI workflow will
 
 Any warnings or errors will cause the CI check to fail, preventing merge to main.
 
+### PR Preview Deployments
+
+Every PR automatically gets a preview deployment to GitHub Pages for manual testing:
+
+1. When a PR is opened or updated, a preview is built and deployed
+2. A comment is posted on the PR with a link to the preview environment
+3. The preview is automatically updated when new changes are pushed
+4. You can manually test the application in a production-like environment
+5. Preview deployments are cleaned up when PRs are merged or closed
+
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

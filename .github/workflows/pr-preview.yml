@@ -1,0 +1,61 @@
+name: PR Preview Deployment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build_and_preview:
+    runs-on: ubuntu-latest
+    name: Build and Deploy PR Preview
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for git
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          # Use PR number for the base path to avoid conflicts
+          BASE_PATH: '/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}'
+        run: npm run build
+
+      - name: Deploy preview
+        uses: rossjrw/pr-preview-action@v1.4.7
+        with:
+          source-dir: ./build
+          preview-branch: gh-pages
+          umbrella-dir: pr-preview
+          action: auto
+
+      # Post comment on PR with preview URL
+      - name: Find Comment
+        uses: peter-evans/find-comment@v2
+        id: find-comment
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Preview deployment
+
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          edit-mode: replace
+          body: |
+            ### 🚀 Preview deployment
+
+            Changes from this PR are deployed to a preview environment:
+
+            🔗 https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}/
+
+            _This preview will be automatically updated when new changes are pushed to this PR._
