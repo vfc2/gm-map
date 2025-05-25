@@ -1,0 +1,38 @@
+name: Setup GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/gh-pages-setup.yml'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  setup_pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+        with:
+          static_site_generator: "sveltekit"
+      
+      - name: Ensure gh-pages branch exists
+        run: |
+          git fetch origin gh-pages || git checkout --orphan gh-pages
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          if [ ! -f index.html ]; then
+            echo "<html><body><h1>GitHub Pages for GM Map</h1><p>This branch hosts PR preview deployments.</p></body></html>" > index.html
+            git add index.html
+            git commit -m "Initial GitHub Pages setup"
+            git push origin gh-pages
+          fi
