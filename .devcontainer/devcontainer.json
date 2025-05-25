@@ -1,0 +1,24 @@
+{
+	"name": "gm-map-dev",
+	"dockerFile": "Dockerfile",
+	"forwardPorts": [5173, 4173],
+	"remoteUser": "node",
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:latest": {}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"svelte.svelte-vscode",
+				"dbaeumer.vscode-eslint",
+				"esbenp.prettier-vscode",
+				"bradlc.vscode-tailwindcss",
+				"github.copilot",
+				"github.vscode-pull-request-github",
+				"github.remotehub",
+				"ms-vscode.vscode-speech"
+			]
+		}
+	},
+	"postCreateCommand": "npm install"
+}

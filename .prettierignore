@@ -1,0 +1,13 @@
+# Package Managers
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+bun.lock
+bun.lockb
+
+# GitHub Workflow Files
+.github/workflows/*.yml
+
+# Build output
+build/
+coverage/
