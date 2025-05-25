@@ -23,64 +23,51 @@ jobs:
         with:
           static_site_generator: 'sveltekit'
 
+      - name: Configure git for GitHub Actions
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
       - name: Ensure gh-pages branch exists
         run: |
           # Try to fetch the gh-pages branch, create it if it doesn't exist
           git fetch origin gh-pages || git checkout -b gh-pages
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git config --global user.name "github-actions[bot]"
 
-          # Create a simple index.html file if it doesn't exist
-          if [ ! -f index.html ]; then
-            echo "<html><body><h1>GitHub Pages for GM Map</h1><p>This branch hosts PR preview deployments.</p></body></html>" > index.html
-            git add index.html
-            git commit -m "Initial GitHub Pages setup"
-            git push origin gh-pages
-          fi
-
-      - name: Deploy GitHub Pages site
+      - name: Create necessary files
         run: |
           # Create a basic .nojekyll file to prevent GitHub Pages from using Jekyll
           touch .nojekyll
-          git add .nojekyll
-          
+
           # Create a simple index.html in the root to prevent 404 errors
           if [ ! -f index.html ]; then
-            cat > index.html << 'EOL'
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>GM Map - GitHub Pages</title>
-  <meta http-equiv="refresh" content="0; url=https://vfc2.github.io/gm-map/">
-  <script>
-    window.location.href = "https://vfc2.github.io/gm-map/";
-  </script>
-</head>
-<body>
-  <p>Redirecting to main application...</p>
-  <p>If you are not redirected, <a href="https://vfc2.github.io/gm-map/">click here</a>.</p>
-</body>
-</html>
-EOL
-            git add index.html
+            echo '<!DOCTYPE html>' > index.html
+            echo '<html>' >> index.html
+            echo '<head>' >> index.html
+            echo '  <meta charset="utf-8">' >> index.html
+            echo '  <title>GM Map - GitHub Pages</title>' >> index.html
+            echo '  <meta http-equiv="refresh" content="0; url=https://vfc2.github.io/gm-map/">' >> index.html
+            echo '  <script>' >> index.html
+            echo '    window.location.href = "https://vfc2.github.io/gm-map/";' >> index.html
+            echo '  </script>' >> index.html
+            echo '</head>' >> index.html
+            echo '<body>' >> index.html
+            echo '  <p>Redirecting to main application...</p>' >> index.html
+            echo '  <p>If you are not redirected, <a href="https://vfc2.github.io/gm-map/">click here</a>.</p>' >> index.html
+            echo '</body>' >> index.html
+            echo '</html>' >> index.html
           fi
-          
-          # Commit and push the changes if needed
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Setup GitHub Pages"
-            git push origin gh-pages
-          fi
-          
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .
+          branch: gh-pages
+          clean-exclude: pr-preview/
+
+      - name: Output setup instructions
+        run: |
           echo "GitHub Pages setup is complete!"
           echo "Once this workflow completes, go to:"
           echo "Repository Settings > Pages > GitHub Pages"
           echo "Ensure that 'Source' is set to 'Deploy from a branch'"
           echo "And 'Branch' is set to 'gh-pages' with '/ (root)' folder"
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: . # Just deploy the current directory with the index.html file
-          branch: gh-pages
-          clean-exclude: pr-preview/ # Don't delete PR preview directories
