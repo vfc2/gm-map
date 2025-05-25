@@ -128,18 +128,7 @@
 			aria-label="Search"
 			class="search-button"
 		>
-			{#if isSearching}
-				<svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 24 24">
-					<circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="30" stroke-dashoffset="0">
-						<animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/>
-					</circle>
-				</svg>
-			{:else}
-				<svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-					<circle cx="11" cy="11" r="8"></circle>
-					<line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-				</svg>
-			{/if}
+			{#if isSearching}Searching...{:else}Search{/if}
 		</button>
 	</form>
 
@@ -181,16 +170,15 @@
 		width: 100%;
 		display: flex;
 		background: white;
-		border-radius: 24px;
+		border-radius: 4px;
 		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-		position: relative;
 	}
 
 	.search-input {
 		flex: 1;
-		padding: 12px 48px 12px 16px;
+		padding: 10px 15px;
 		border: none;
-		border-radius: 24px;
+		border-radius: 4px 0 0 4px;
 		font-size: 16px;
 	}
 
@@ -199,31 +187,18 @@
 	}
 
 	.search-button {
-		position: absolute;
-		right: 5px;
-		top: 50%;
-		transform: translateY(-50%);
-		padding: 8px;
-		background: transparent;
-		color: #4285f4;
+		padding: 10px 15px;
+		background: #4285f4;
+		color: white;
 		border: none;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		border-radius: 0 4px 4px 0;
 		cursor: pointer;
-		border-radius: 50%;
-		width: 36px;
-		height: 36px;
-	}
-
-	.search-button:hover {
-		background-color: rgba(66, 133, 244, 0.1);
+		font-size: 14px;
 	}
 
 	.search-button:disabled {
-		color: #ccc;
+		background: #ccc;
 		cursor: not-allowed;
-		background-color: transparent;
 	}
 
 	.suggestions-container {
@@ -232,12 +207,12 @@
 		left: 0;
 		right: 0;
 		background: white;
-		border-radius: 0 0 16px 16px;
+		border-radius: 0 0 4px 4px;
 		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 		max-height: 300px;
 		overflow-y: auto;
 		z-index: 5;
-		margin-top: 8px;
+		margin-top: 2px;
 	}
 
 	.suggestion-item {
@@ -249,7 +224,7 @@
 
 	.suggestion-item:last-child {
 		border-bottom: none;
-		border-radius: 0 0 16px 16px;
+		border-radius: 0 0 4px 4px;
 	}
 
 	.suggestion-item:hover {
