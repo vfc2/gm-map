@@ -1,6 +1,6 @@
 # Greater Manchester Explorer
 
-[![CI](https://github.com/yourusername/sveltekit-test/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/sveltekit-test/actions/workflows/ci.yml)
+[![CI](https://github.com/vfc2/gm-map/actions/workflows/ci.yml/badge.svg)](https://github.com/vfc2/gm-map/actions/workflows/ci.yml)
 
 An interactive map application for Greater Manchester using SvelteKit, TypeScript, and MapLibre.
 
