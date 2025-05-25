@@ -1,144 +1,49 @@
-name: PR Preview Deployment
+name: PR Preview
 
 on:
   pull_request:
     types: [opened, synchronize, reopened]
 
-# Set permissions needed for the workflow
 permissions:
-  contents: write # Needed to write to the gh-pages branch
-  pull-requests: write # Needed to comment on pull requests
-  pages: write # Needed for GitHub Pages deployments
-  id-token: write # Needed for GitHub Pages deployments
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-  build_and_preview:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    name: Build and Deploy PR Preview
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Fetch all history for git
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Prepare build environment
-        env:
-          # Use PR number for the base path to avoid conflicts - must match the deployment path
-          BASE_PATH: '/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}'
+      - name: Run checks
         run: |
-          echo "Setting up build with BASE_PATH=${BASE_PATH}"
+          npm run format
+          npm run lint
+          npm run check
+          npm run build
+          npm run test:ci
 
-          # Create a .env file to ensure the BASE_PATH is available during build
-          echo "PUBLIC_BASE_PATH=${BASE_PATH}" > .env
-          echo "VITE_BASE_PATH=${BASE_PATH}" >> .env
+      - name: Build static site
+        run: npm run build
 
-          # Create the runtime config file directly for immediate access
-          mkdir -p static
-          cat > static/path-config.js << EOL
-window.APP_BASE_PATH = "${BASE_PATH}";
-console.log("Path config initialized with BASE_PATH: ${BASE_PATH}");
-EOL
-          
-          # Create .nojekyll file to prevent GitHub Pages from using Jekyll
-          touch static/.nojekyll
-
-          # Run the prepare build script to set up the environment
-          echo "Running prepare-build.js script..."
-          if [ -f "scripts/prepare-build.js" ]; then
-            node scripts/prepare-build.js
-          fi
-
-      - name: Build
-        run: |
-          echo "Building with BASE_PATH=${BASE_PATH}"
-          # Use the specialized PR preview build command
-          npm run build:pr
-          
-          # Verify build output
-          echo "Build complete. Verifying output..."
-          find build -type f -name "*.html" -exec grep -l "path-config.js" {} \;
-          
-          # Make sure index.html and other key files exist
-          if [ ! -f "build/index.html" ]; then
-            echo "Error: build/index.html not found!"
-            exit 1
-          fi
-          
-          # Verify path config was correctly generated
-          if ! grep -q "APP_BASE_PATH.*${BASE_PATH}" build/path-config.js; then
-            echo "Error: BASE_PATH not correctly set in path-config.js"
-            cat build/path-config.js
-            exit 1
-          fi
-          
-          # Create additional SPA routing helpers
-          cp build/index.html build/404.html
-          touch build/.nojekyll
-
-      - name: Deploy preview
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          folder: build
-          branch: gh-pages
-          target-folder: pr-preview/pr-${{ github.event.pull_request.number }}
-          clean: true
-          clean-exclude: |
-            .nojekyll
-            404.html
+          path: ./build
 
-      # Post comment on PR with preview URL
-      - name: Find Comment
-        uses: peter-evans/find-comment@v2
-        id: find-comment
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: Preview deployment
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v3
-        with:
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          issue-number: ${{ github.event.pull_request.number }}
-          edit-mode: replace
-          token: ${{ secrets.GITHUB_TOKEN }}
-          body: |
-            ### 🚀 Preview deployment
-
-            Changes from this PR are deployed to a preview environment:
-
-            🔗 [View Preview](https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }})
-
-            _This preview will be automatically updated when new changes are pushed to this PR._
-
-      # Make sure GitHub Pages is enabled for this repository
-      - name: Configure GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
-        run: |
-          # Create gh-pages branch if it doesn't exist
-          git fetch origin gh-pages || git branch gh-pages
+        uses: actions/deploy-pages@v4
 
-          # Verify the build output
-          echo "Verifying build output structure:"
-          ls -la build/
-
-          # Make sure the _app directory and assets are properly linked with the correct base path
-          echo "Checking _app directory:"
-          ls -la build/_app/ || echo "_app directory not found"
-
-          # Additional debugging - check that index.html has the correct references
-          echo "Checking index.html for proper base path:"
-          grep -i "src=" build/index.html || echo "No script references found"
-
-          # Get the current repo URL for the comment
-          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
-          echo "page_url=https://vfc2.github.io/gm-map/pr-preview/pr-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+      - name: PR Preview URL
+        run: echo "Preview URL: ${{ steps.deployment.outputs.page_url }}"
