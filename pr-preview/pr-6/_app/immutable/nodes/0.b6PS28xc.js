@@ -1,0 +1,2 @@
+import{c as f,a as i}from"../chunks/CQJVDx4K.js";import"../chunks/BFsdYqbv.js";import{j as l,k as c,C as u}from"../chunks/2BKHPEw_.js";function d(n,e,t,r,p){var s;l&&c();var a=(s=e.$$slots)==null?void 0:s[t],o=!1;a===!0&&(a=e.children,o=!0),a===void 0||a(n,o?()=>r:r)}const m=!0,_=!1,g=Object.freeze(Object.defineProperty({__proto__:null,prerender:m,ssr:_},Symbol.toStringTag,{value:"Module"}));function h(n,e){var t=f(),r=u(t);d(r,e,"default",{}),i(n,t)}export{h as component,g as universal};
+//# sourceMappingURL=0.b6PS28xc.js.map
