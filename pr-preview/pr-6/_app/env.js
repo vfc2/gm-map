@@ -1,1 +1,1 @@
-export const env={}
+export const env={"PUBLIC_BASE_PATH":"/gm-map/pr-preview/pr-6"}
