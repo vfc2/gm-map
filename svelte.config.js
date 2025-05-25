@@ -4,7 +4,7 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	preprocess: vitePreprocess(),
-	
+
 	kit: {
 		// Configure the static adapter with fallback for SPA routing
 		adapter: adapter({
@@ -14,12 +14,12 @@ const config = {
 			precompress: false,
 			strict: false // This allows dynamic routes without prerendering
 		}),
-		
+
 		// Ensure paths work correctly in GitHub Pages subdirectories
 		paths: {
 			base: process.env.BASE_PATH || ''
 		},
-		
+
 		// Alias configuration for better imports
 		alias: {
 			$lib: './src/lib'

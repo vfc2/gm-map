@@ -16,15 +16,19 @@
 
 				// For PR preview paths in the format /org/repo/pr-preview/pr-XX/
 				if (path.includes('/pr-preview/pr-')) {
+					console.debug('PR preview path detected:', path);
 					// Count segments before the app routes
 					var pathParts = path.split('/').filter(Boolean);
 					var prIndex = pathParts.findIndex((part) => part === 'pr-preview');
-					if (prIndex >= 0) {
+					if (prIndex >= 0 && prIndex + 1 < pathParts.length) {
+						console.debug('PR preview segments:', pathParts, 'keeping', prIndex + 2);
 						return prIndex + 2; // +2 for 'pr-preview' and 'pr-XX'
 					}
+					console.debug('Falling back to 4 segments for PR preview');
 					return 4; // Default for PR preview paths: /org/repo/pr-preview/pr-XX
 				}
 
+				console.debug('Using default 2 segments for regular GitHub Pages');
 				return 2; // Default for regular GitHub Pages project sites
 			}
 

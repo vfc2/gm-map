@@ -38,18 +38,50 @@ jobs:
 
           # Create a .env file to ensure the BASE_PATH is available during build
           echo "PUBLIC_BASE_PATH=${BASE_PATH}" > .env
+          echo "VITE_BASE_PATH=${BASE_PATH}" >> .env
 
-          # Create the runtime config file
+          # Create the runtime config file directly for immediate access
           mkdir -p static
-          echo "window.APP_BASE_PATH = \"${BASE_PATH}\";" > static/path-config.js
+          cat > static/path-config.js << EOL
+window.APP_BASE_PATH = "${BASE_PATH}";
+console.log("Path config initialized with BASE_PATH: ${BASE_PATH}");
+EOL
+          
+          # Create .nojekyll file to prevent GitHub Pages from using Jekyll
+          touch static/.nojekyll
 
-          # Run the prepare build script if it exists
+          # Run the prepare build script to set up the environment
+          echo "Running prepare-build.js script..."
           if [ -f "scripts/prepare-build.js" ]; then
             node scripts/prepare-build.js
           fi
 
       - name: Build
-        run: npm run build
+        run: |
+          echo "Building with BASE_PATH=${BASE_PATH}"
+          # Use the specialized PR preview build command
+          npm run build:pr
+          
+          # Verify build output
+          echo "Build complete. Verifying output..."
+          find build -type f -name "*.html" -exec grep -l "path-config.js" {} \;
+          
+          # Make sure index.html and other key files exist
+          if [ ! -f "build/index.html" ]; then
+            echo "Error: build/index.html not found!"
+            exit 1
+          fi
+          
+          # Verify path config was correctly generated
+          if ! grep -q "APP_BASE_PATH.*${BASE_PATH}" build/path-config.js; then
+            echo "Error: BASE_PATH not correctly set in path-config.js"
+            cat build/path-config.js
+            exit 1
+          fi
+          
+          # Create additional SPA routing helpers
+          cp build/index.html build/404.html
+          touch build/.nojekyll
 
       - name: Deploy preview
         uses: JamesIves/github-pages-deploy-action@v4
@@ -58,6 +90,9 @@ jobs:
           branch: gh-pages
           target-folder: pr-preview/pr-${{ github.event.pull_request.number }}
           clean: true
+          clean-exclude: |
+            .nojekyll
+            404.html
 
       # Post comment on PR with preview URL
       - name: Find Comment
