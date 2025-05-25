@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" href="/gm-map/pr-preview/pr-6/favicon.png" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<!-- GitHub Pages redirect script for client-side routing -->
+		<script type="text/javascript">
+			// Single Page Apps for GitHub Pages
+			// This script checks to see if a redirect is present in the query string,
+			// converts it back into the correct url and adds it to the browser's history
+			// without causing a page navigation
+			(function (l) {
+				if (l.search[1] === '/') {
+					var decoded = l.search
+						.slice(1)
+						.split('&')
+						.map(function (s) {
+							return s.replace(/~and~/g, '&');
+						})
+						.join('?');
+					window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash);
+				}
+			})(window.location);
+		</script>
+
+		
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/entry/start.C5PZl3d-.js">
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/chunks/DQF7DVui.js">
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/chunks/CC8oD_oR.js">
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/chunks/CfOW1Ame.js">
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/entry/app.CzBu-MwT.js">
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/chunks/Cnjmy3fV.js">
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/chunks/jwYKyTIU.js">
+		<link rel="modulepreload" href="/gm-map/pr-preview/pr-6/_app/immutable/chunks/Fob3nVPQ.js">
+	</head>
+	<body data-sveltekit-preload-data="hover">
+		<div style="display: contents">
+			<script>
+				{
+					__sveltekit_nqg713 = {
+						base: "/gm-map/pr-preview/pr-6",
+						assets: "/gm-map/pr-preview/pr-6"
+					};
+
+					const element = document.currentScript.parentElement;
+
+					Promise.all([
+						import("/gm-map/pr-preview/pr-6/_app/immutable/entry/start.C5PZl3d-.js"),
+						import("/gm-map/pr-preview/pr-6/_app/immutable/entry/app.CzBu-MwT.js")
+					]).then(([kit, app]) => {
+						kit.start(app, element);
+					});
+				}
+			</script>
+		</div>
+	</body>
+</html>
