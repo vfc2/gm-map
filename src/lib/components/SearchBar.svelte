@@ -109,50 +109,82 @@
 </script>
 
 <div class="search-wrapper">
-	<form on:submit|preventDefault={handleSubmit} class="search-container">
-		<input
-			type="text"
-			bind:value={searchQuery}
-			bind:this={inputElement}
-			on:input={handleInput}
-			on:keydown={handleKeydown}
-			on:focus={() => (showSuggestions = suggestions.length > 0)}
-			placeholder="Search for places"
-			aria-label="Search locations"
-			class="search-input"
-			autocomplete="off"
-		/>
-		<button
-			type="submit"
-			disabled={isSearching || !searchQuery.trim()}
-			aria-label="Search"
-			class="search-button"
+	<div class="search-bar-group">
+		<form
+			on:submit|preventDefault={handleSubmit}
+			class="search-container {showSuggestions ? 'with-suggestions' : ''}"
+			role="search"
+			aria-label="Search for places"
 		>
-			{#if isSearching}Searching...{:else}Search{/if}
-		</button>
-	</form>
+			<input
+				type="text"
+				bind:value={searchQuery}
+				bind:this={inputElement}
+				on:input={handleInput}
+				on:keydown={handleKeydown}
+				on:focus={() => (showSuggestions = suggestions.length > 0)}
+				placeholder="Search for places"
+				aria-label="Search locations"
+				class="search-input"
+				autocomplete="off"
+				role="searchbox"
+				aria-expanded={showSuggestions}
+				aria-autocomplete="list"
+				aria-controls="suggestions-listbox"
+				aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
+			/>
+			<button
+				type="submit"
+				disabled={isSearching || !searchQuery.trim()}
+				aria-label="Search"
+				class="search-button-icon"
+			>
+				<svg
+					width="22"
+					height="22"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="search-icon"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="8" />
+					<line x1="21" y1="21" x2="16.65" y2="16.65" />
+				</svg>
+			</button>
+		</form>
 
-	{#if showSuggestions}
-		<div class="suggestions-container" role="listbox" aria-label="Search suggestions">
-			{#if suggestions.length > 0}
-				{#each suggestions as suggestion, i (suggestion.id)}
-					<div
-						class="suggestion-item {i === selectedIndex ? 'selected' : ''}"
-						on:click={() => selectSuggestion(suggestion)}
-						on:keydown={(e) => e.key === 'Enter' && selectSuggestion(suggestion)}
-						tabindex="0"
-						role="option"
-						aria-selected={i === selectedIndex}
-					>
-						<div class="suggestion-name">{suggestion.name}</div>
-						<div class="suggestion-details">{suggestion.display_name}</div>
-					</div>
-				{/each}
-			{:else}
-				<div class="no-suggestions">No matches found for "{searchQuery.trim()}"</div>
-			{/if}
-		</div>
-	{/if}
+		{#if showSuggestions}
+			<div
+				class="suggestions-container"
+				id="suggestions-listbox"
+				role="listbox"
+				aria-label="Search suggestions"
+			>
+				{#if suggestions.length > 0}
+					{#each suggestions as suggestion, i (suggestion.id)}
+						<div
+							class="suggestion-item {i === selectedIndex ? 'selected' : ''}"
+							on:click={() => selectSuggestion(suggestion)}
+							on:keydown={(e) => e.key === 'Enter' && selectSuggestion(suggestion)}
+							tabindex="0"
+							role="option"
+							aria-selected={i === selectedIndex}
+							id={`suggestion-${i}`}
+						>
+							<div class="suggestion-name">{suggestion.name}</div>
+							<div class="suggestion-details">{suggestion.display_name}</div>
+						</div>
+					{/each}
+				{:else}
+					<div class="no-suggestions">No matches found for "{searchQuery.trim()}"</div>
+				{/if}
+			</div>
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -162,89 +194,126 @@
 		left: 50%;
 		transform: translateX(-50%);
 		z-index: 10;
-		width: 300px;
-		max-width: 90%;
+		width: 400px;
+		max-width: 95vw;
+	}
+
+	.search-bar-group {
+		position: relative;
+		width: 100%;
+		box-sizing: border-box;
 	}
 
 	.search-container {
 		width: 100%;
 		display: flex;
 		background: white;
-		border-radius: 4px;
-		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		border-radius: 16px;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+		align-items: center;
+		padding: 2px 8px 2px 8px;
+		transition: border-radius 0.15s;
+		border-bottom-left-radius: 16px;
+		border-bottom-right-radius: 16px;
+		box-sizing: border-box;
+	}
+
+	.search-container.with-suggestions {
+		border-bottom-left-radius: 0;
+		border-bottom-right-radius: 0;
 	}
 
 	.search-input {
 		flex: 1;
-		padding: 10px 15px;
+		padding: 12px 16px;
 		border: none;
-		border-radius: 4px 0 0 4px;
+		border-radius: 16px;
 		font-size: 16px;
+		background: transparent;
+		box-sizing: border-box;
 	}
 
 	.search-input:focus {
 		outline: none;
 	}
 
-	.search-button {
-		padding: 10px 15px;
-		background: #4285f4;
-		color: white;
+	.search-button-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background: none;
 		border: none;
-		border-radius: 0 4px 4px 0;
+		padding: 8px;
+		border-radius: 50%;
 		cursor: pointer;
-		font-size: 14px;
+		transition: background 0.15s;
+		margin-left: 2px;
 	}
 
-	.search-button:disabled {
-		background: #ccc;
+	.search-button-icon:disabled {
 		cursor: not-allowed;
+		background: none;
+		color: #ccc;
+	}
+
+	.search-icon {
+		color: #888;
+		transition: color 0.15s;
+	}
+
+	.search-button-icon:not(:disabled):hover .search-icon {
+		color: #1976d2;
 	}
 
 	.suggestions-container {
 		position: absolute;
 		top: 100%;
 		left: 0;
-		right: 0;
+		width: 100%;
 		background: white;
-		border-radius: 0 0 4px 4px;
-		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-		max-height: 300px;
+		border-radius: 0 0 16px 16px;
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+		max-height: 320px;
 		overflow-y: auto;
 		z-index: 5;
-		margin-top: 2px;
+		margin-top: 0;
+		border-top: 1px solid #f0f0f0;
+		box-sizing: border-box;
 	}
 
 	.suggestion-item {
-		padding: 12px 15px;
+		padding: 14px 18px 10px 18px;
 		cursor: pointer;
-		border-bottom: 1px solid #eee;
-		transition: background-color 0.15s ease;
+		border-bottom: 1px solid #f3f3f3;
+		transition: background-color 0.15s;
+		outline: none;
 	}
 
 	.suggestion-item:last-child {
 		border-bottom: none;
-		border-radius: 0 0 4px 4px;
+		border-radius: 0 0 16px 16px;
 	}
 
 	.suggestion-item:hover {
 		background-color: #f2f7ff;
+		/* Remove border-left highlight on hover */
 	}
 
 	.suggestion-item.selected {
-		background-color: #e6f0ff;
-		border-left: 3px solid #4285f4;
-		padding-left: 12px;
+		background-color: #f2f7ff;
+		border-left: 3px solid #1976d2;
+		padding-left: 15px;
 	}
 
 	.suggestion-name {
-		font-weight: bold;
-		margin-bottom: 4px;
-		color: #333;
+		font-weight: 600;
+		margin-bottom: 2px;
+		color: #222;
+		font-size: 15px;
 	}
 
 	.suggestion-details {
-		font-size: 12px;
+		font-size: 13px;
 		color: #666;
 		white-space: nowrap;
 		overflow: hidden;
@@ -252,11 +321,11 @@
 	}
 
 	.no-suggestions {
-		padding: 12px 15px;
+		padding: 14px 18px;
 		color: #666;
 		text-align: center;
 		font-style: italic;
-		font-size: 14px;
+		font-size: 15px;
 		border-bottom: none;
 	}
 </style>
