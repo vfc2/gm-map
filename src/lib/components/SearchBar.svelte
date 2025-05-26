@@ -128,6 +128,7 @@
 				class="search-input"
 				autocomplete="off"
 				role="searchbox"
+				aria-expanded={showSuggestions}
 				aria-autocomplete="list"
 				aria-controls="suggestions-listbox"
 				aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
