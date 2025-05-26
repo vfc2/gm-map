@@ -4,6 +4,7 @@
 	import 'maplibre-gl/dist/maplibre-gl.css';
 	import { searchLocations, type SearchResult, type SearchError } from '$lib/localSearchModule';
 	import SearchBar from './SearchBar.svelte';
+	import { policeStations } from '$lib/data/policeStations';
 
 	// Container for the map
 	let mapContainer: HTMLElement;
@@ -14,6 +15,10 @@
 	// Search state
 	let searchResults: SearchResult[] = [];
 	let searchError: string | null = null;
+
+	// Police stations state
+	let showPoliceStations = false;
+	let policeMarkers: maplibre.Marker[] = [];
 
 	// Handle search event from SearchBar
 	async function handleSearch(event: CustomEvent<{ query: string }>) {
@@ -78,6 +83,74 @@
 		} else {
 			searchError = 'No matching locations found in Greater Manchester.';
 		}
+	}
+
+	// Handle police stations toggle from SearchBar
+	function handleTogglePoliceStations(event: CustomEvent<{ show: boolean }>) {
+		showPoliceStations = event.detail.show;
+
+		if (showPoliceStations) {
+			addPoliceStationMarkers();
+		} else {
+			removePoliceStationMarkers();
+		}
+	}
+
+	// Add police station markers to the map
+	function addPoliceStationMarkers() {
+		if (!map) return;
+
+		// Remove existing markers first
+		removePoliceStationMarkers();
+
+		// Create a police badge icon element
+		policeStations.forEach((station) => {
+			// Create a popup with station info
+			const popup = new maplibre.Popup({
+				offset: 25,
+				closeButton: true,
+				closeOnClick: true,
+				className: 'police-station-popup'
+			}).setHTML(`
+					<div class="popup-content">
+						<h3>${station.name}</h3>
+						<p>${station.address}</p>
+					</div>
+				`);
+
+			// Create marker element
+			const el = document.createElement('div');
+			el.className = 'police-marker';
+			el.innerHTML = `
+				<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+					<path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z" />
+					<path d="M12 8v8" />
+					<path d="m8.5 14 7-4" />
+					<path d="m8.5 10 7 4" />
+				</svg>
+			`;
+
+			// Create and add the marker with improved options
+			const marker = new maplibre.Marker({
+				element: el,
+				anchor: 'bottom',
+				offset: [0, 0],
+				pitchAlignment: 'map', // Keep aligned with the map plane
+				rotationAlignment: 'map' // Keep aligned with the map
+			})
+				.setLngLat([station.lon, station.lat])
+				.setPopup(popup)
+				.addTo(map as maplibre.Map);
+
+			// Store reference to marker for later removal
+			policeMarkers.push(marker);
+		});
+	}
+
+	// Remove police station markers from the map
+	function removePoliceStationMarkers() {
+		policeMarkers.forEach((marker) => marker.remove());
+		policeMarkers = [];
 	}
 
 	onMount(() => {
@@ -165,7 +238,7 @@
 </script>
 
 <div class="map-wrapper">
-	<SearchBar on:search={handleSearch} />
+	<SearchBar on:search={handleSearch} on:togglePoliceStations={handleTogglePoliceStations} />
 
 	{#if searchError}
 		<div class="search-error">
@@ -217,5 +290,55 @@
 			opacity: 1;
 			transform: translateX(-50%) translateY(0);
 		}
+	}
+
+	/* Police marker styles */
+	:global(.police-marker) {
+		width: 32px;
+		height: 32px;
+		cursor: pointer;
+		color: #0052a5;
+		background-color: white;
+		border-radius: 50%;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: transform 0.2s;
+	}
+
+	:global(.police-marker:hover) {
+		transform: scale(1.1);
+	}
+
+	:global(.police-marker svg) {
+		width: 22px;
+		height: 22px;
+	}
+
+	:global(.police-station-popup) {
+		max-width: 300px;
+		font-family:
+			-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+			'Helvetica Neue', sans-serif;
+	}
+
+	:global(.police-station-popup .maplibregl-popup-content) {
+		padding: 15px;
+		border-radius: 12px;
+		box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+	}
+
+	:global(.police-station-popup h3) {
+		margin: 0 0 8px 0;
+		font-size: 16px;
+		color: #0052a5;
+	}
+
+	:global(.police-station-popup p) {
+		margin: 0;
+		color: #444;
+		font-size: 14px;
+		line-height: 1.4;
 	}
 </style>

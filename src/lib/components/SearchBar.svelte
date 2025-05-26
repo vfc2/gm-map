@@ -4,6 +4,7 @@
 
 	const dispatch = createEventDispatcher<{
 		search: { query: string };
+		togglePoliceStations: { show: boolean };
 	}>();
 
 	let searchQuery = '';
@@ -13,6 +14,7 @@
 	let selectedIndex = -1;
 	let inputElement: HTMLInputElement;
 	let debounceTimer: ReturnType<typeof setTimeout>;
+	let showPoliceStations = false;
 
 	// Get suggestions as the user types
 	async function handleInput() {
@@ -97,6 +99,12 @@
 		}
 	}
 
+	// Handle police stations toggle
+	function togglePoliceStations() {
+		showPoliceStations = !showPoliceStations;
+		dispatch('togglePoliceStations', { show: showPoliceStations });
+	}
+
 	onMount(() => {
 		// Add global click listener
 		document.addEventListener('click', handleClickOutside);
@@ -109,6 +117,41 @@
 </script>
 
 <div class="search-wrapper">
+	<!-- Toggle buttons header -->
+	<div class="toggle-header">
+		<div class="toggle-buttons-container">
+			<button
+				type="button"
+				class="toggle-button {showPoliceStations ? 'active' : ''}"
+				on:click={togglePoliceStations}
+				aria-pressed={showPoliceStations}
+				aria-label="Toggle police stations visibility"
+			>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="toggle-icon"
+					aria-hidden="true"
+				>
+					<path
+						d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"
+					/>
+					<path d="M12 8v8" />
+					<path d="m8.5 14 7-4" />
+					<path d="m8.5 10 7 4" />
+				</svg>
+				<span>Police stations</span>
+			</button>
+			<!-- Space for more toggle buttons in the future -->
+		</div>
+	</div>
+
 	<div class="search-bar-group">
 		<form
 			on:submit|preventDefault={handleSubmit}
@@ -127,8 +170,6 @@
 				aria-label="Search locations"
 				class="search-input"
 				autocomplete="off"
-				role="searchbox"
-				aria-expanded={showSuggestions}
 				aria-autocomplete="list"
 				aria-controls="suggestions-listbox"
 				aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
@@ -196,6 +237,21 @@
 		z-index: 10;
 		width: 400px;
 		max-width: 95vw;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.toggle-header {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.toggle-buttons-container {
+		display: flex;
+		gap: 8px;
+		justify-content: center;
 	}
 
 	.search-bar-group {
@@ -327,5 +383,50 @@
 		font-style: italic;
 		font-size: 15px;
 		border-bottom: none;
+	}
+
+	.toggle-button {
+		display: flex;
+		align-items: center;
+		background: white;
+		border: none;
+		border-radius: 16px;
+		padding: 8px 14px;
+		font-size: 14px;
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+		transition: all 0.2s;
+		color: #666;
+		white-space: nowrap;
+		height: 40px;
+		gap: 6px;
+	}
+
+	.toggle-button:hover {
+		background: #f9f9f9;
+	}
+
+	.toggle-button.active {
+		background: #1976d2;
+		color: white;
+	}
+
+	.toggle-button.active .toggle-icon {
+		color: white;
+	}
+
+	.toggle-icon {
+		color: #888;
+		transition: color 0.2s;
+	}
+
+	@media (max-width: 640px) {
+		.toggle-button span {
+			display: none;
+		}
+
+		.toggle-button {
+			padding: 8px;
+		}
 	}
 </style>
