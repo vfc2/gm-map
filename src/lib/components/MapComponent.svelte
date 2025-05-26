@@ -130,10 +130,13 @@
 				</svg>
 			`;
 
-			// Create and add the marker
+			// Create and add the marker with improved options
 			const marker = new maplibre.Marker({
 				element: el,
-				anchor: 'bottom'
+				anchor: 'bottom',
+				offset: [0, 0],
+				pitchAlignment: 'map', // Keep aligned with the map plane
+				rotationAlignment: 'map' // Keep aligned with the map
 			})
 				.setLngLat([station.lon, station.lat])
 				.setPopup(popup)

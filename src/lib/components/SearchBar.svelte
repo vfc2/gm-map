@@ -117,6 +117,41 @@
 </script>
 
 <div class="search-wrapper">
+	<!-- Toggle buttons header -->
+	<div class="toggle-header">
+		<div class="toggle-buttons-container">
+			<button
+				type="button"
+				class="toggle-button {showPoliceStations ? 'active' : ''}"
+				on:click={togglePoliceStations}
+				aria-pressed={showPoliceStations}
+				aria-label="Toggle police stations visibility"
+			>
+				<svg
+					width="20"
+					height="20"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					class="toggle-icon"
+					aria-hidden="true"
+				>
+					<path
+						d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z"
+					/>
+					<path d="M12 8v8" />
+					<path d="m8.5 14 7-4" />
+					<path d="m8.5 10 7 4" />
+				</svg>
+				<span>Police stations</span>
+			</button>
+			<!-- Space for more toggle buttons in the future -->
+		</div>
+	</div>
+
 	<div class="search-bar-group">
 		<form
 			on:submit|preventDefault={handleSubmit}
@@ -163,34 +198,6 @@
 			</button>
 		</form>
 
-		<button
-			type="button"
-			class="toggle-button {showPoliceStations ? 'active' : ''}"
-			on:click={togglePoliceStations}
-			aria-pressed={showPoliceStations}
-			aria-label="Toggle police stations visibility"
-		>
-			<svg
-				width="20"
-				height="20"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-				class="toggle-icon"
-				aria-hidden="true"
-			>
-				<path
-					d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"
-				/>
-				<circle cx="12" cy="12" r="7" />
-				<path d="M12 9v3l2 2" />
-			</svg>
-			<span>Police stations</span>
-		</button>
-
 		{#if showSuggestions}
 			<div
 				class="suggestions-container"
@@ -230,19 +237,31 @@
 		z-index: 10;
 		width: 400px;
 		max-width: 95vw;
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.toggle-header {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.toggle-buttons-container {
+		display: flex;
+		gap: 8px;
+		justify-content: center;
 	}
 
 	.search-bar-group {
 		position: relative;
 		width: 100%;
 		box-sizing: border-box;
-		display: flex;
-		align-items: center;
-		gap: 8px;
 	}
 
 	.search-container {
-		flex: 1;
+		width: 100%;
 		display: flex;
 		background: white;
 		border-radius: 16px;
