@@ -22,5 +22,5 @@ This is a SvelteKit and Typescript based repository. It is a data visualisation 
 1. Follow best practices and idiomatic patterns.
 2. Maintain existing code structure and organization.
 3. Write unit tests for new functionality. Use table-driven unit tests when possible.
-4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate. Every new or updated feature should have a documentation page.
+4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate. Every new or updated feature should have a documentation page. This folder is included in a git submodule, commit and push separately.
 5. Alwats ask before adding new dependencies of complexity.
