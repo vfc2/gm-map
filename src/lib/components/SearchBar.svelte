@@ -4,6 +4,7 @@
 
 	const dispatch = createEventDispatcher<{
 		search: { query: string };
+		togglePoliceStations: { show: boolean };
 	}>();
 
 	let searchQuery = '';
@@ -13,6 +14,7 @@
 	let selectedIndex = -1;
 	let inputElement: HTMLInputElement;
 	let debounceTimer: ReturnType<typeof setTimeout>;
+	let showPoliceStations = false;
 
 	// Get suggestions as the user types
 	async function handleInput() {
@@ -97,6 +99,12 @@
 		}
 	}
 
+	// Handle police stations toggle
+	function togglePoliceStations() {
+		showPoliceStations = !showPoliceStations;
+		dispatch('togglePoliceStations', { show: showPoliceStations });
+	}
+
 	onMount(() => {
 		// Add global click listener
 		document.addEventListener('click', handleClickOutside);
@@ -127,8 +135,6 @@
 				aria-label="Search locations"
 				class="search-input"
 				autocomplete="off"
-				role="searchbox"
-				aria-expanded={showSuggestions}
 				aria-autocomplete="list"
 				aria-controls="suggestions-listbox"
 				aria-activedescendant={selectedIndex >= 0 ? `suggestion-${selectedIndex}` : undefined}
@@ -156,6 +162,34 @@
 				</svg>
 			</button>
 		</form>
+
+		<button
+			type="button"
+			class="toggle-button {showPoliceStations ? 'active' : ''}"
+			on:click={togglePoliceStations}
+			aria-pressed={showPoliceStations}
+			aria-label="Toggle police stations visibility"
+		>
+			<svg
+				width="20"
+				height="20"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				stroke-width="2"
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				class="toggle-icon"
+				aria-hidden="true"
+			>
+				<path
+					d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"
+				/>
+				<circle cx="12" cy="12" r="7" />
+				<path d="M12 9v3l2 2" />
+			</svg>
+			<span>Police stations</span>
+		</button>
 
 		{#if showSuggestions}
 			<div
@@ -202,10 +236,13 @@
 		position: relative;
 		width: 100%;
 		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		gap: 8px;
 	}
 
 	.search-container {
-		width: 100%;
+		flex: 1;
 		display: flex;
 		background: white;
 		border-radius: 16px;
@@ -327,5 +364,50 @@
 		font-style: italic;
 		font-size: 15px;
 		border-bottom: none;
+	}
+
+	.toggle-button {
+		display: flex;
+		align-items: center;
+		background: white;
+		border: none;
+		border-radius: 16px;
+		padding: 8px 14px;
+		font-size: 14px;
+		cursor: pointer;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+		transition: all 0.2s;
+		color: #666;
+		white-space: nowrap;
+		height: 40px;
+		gap: 6px;
+	}
+
+	.toggle-button:hover {
+		background: #f9f9f9;
+	}
+
+	.toggle-button.active {
+		background: #1976d2;
+		color: white;
+	}
+
+	.toggle-button.active .toggle-icon {
+		color: white;
+	}
+
+	.toggle-icon {
+		color: #888;
+		transition: color 0.2s;
+	}
+
+	@media (max-width: 640px) {
+		.toggle-button span {
+			display: none;
+		}
+
+		.toggle-button {
+			padding: 8px;
+		}
 	}
 </style>
