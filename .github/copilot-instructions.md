@@ -15,8 +15,8 @@ This is a SvelteKit and Typescript based repository. It is a data visualisation 
 
 ## Key Guidelines
 
-1. Follow Go best practices and idiomatic patterns
-2. Maintain existing code structure and organization
+1. Follow best practices and idiomatic patterns.
+2. Maintain existing code structure and organization.
 3. Write unit tests for new functionality. Use table-driven unit tests when possible.
-4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate
+4. Document public APIs and complex logic. Suggest changes to the `docs/` folder when appropriate. Every new or updated feature should have a documentation page.
 5. Alwats ask before adding new dependencies of complexity.
