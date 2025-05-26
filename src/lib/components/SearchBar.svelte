@@ -109,7 +109,7 @@
 </script>
 
 <div class="search-wrapper">
-	<div class="search-bar-group {showSuggestions ? 'with-suggestions' : ''}">
+	<div class="search-bar-group">
 		<form
 			on:submit|preventDefault={handleSubmit}
 			class="search-container {showSuggestions ? 'with-suggestions' : ''}"
